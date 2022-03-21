@@ -48,4 +48,42 @@ describe('PokemonService', () => {
       expect(await service.findOne('pokemon')).toStrictEqual(response.data);
     });
   });
+
+  describe('findTranslatedDescription', () => {
+    it('should return the translated description', async () => {
+      const pokemon = {
+        name: 'wormadam',
+        is_legendary: false,
+        habitat: { name: 'water' },
+        flavor_text_entries: [
+          {
+            flavor_text:
+              'When the bulb on\nits back grows\nlarge, it appears\fto lose the\nability to stand\non its hind legs',
+            language: {
+              name: 'en',
+            },
+          },
+        ],
+      };
+      const translatedDescription = 'a translated description';
+      const response = {
+        data: {
+          contents: {
+            translated: translatedDescription,
+          },
+        },
+      };
+      ('translated description');
+      jest.spyOn(httpService, 'post').mockImplementation(
+        () =>
+          ({
+            toPromise: () => Promise.resolve(response),
+          } as any),
+      );
+
+      expect(await service.findTranslatedDescription(pokemon)).toStrictEqual(
+        translatedDescription,
+      );
+    });
+  });
 });
