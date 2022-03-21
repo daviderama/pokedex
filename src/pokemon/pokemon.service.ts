@@ -33,4 +33,27 @@ export class PokemonService {
 
     return description?.flavor_text || null;
   }
+
+  async findTranslatedDescription(
+    pokemon: PokemonResponse,
+  ): Promise<any> | null {
+    const description = this.findDescription(pokemon.flavor_text_entries);
+    if (pokemon.habitat.name === 'cave' || pokemon.is_legendary) {
+      const response = await this.httpService
+        .post(`https://api.funtranslations.com/translate/yoda.json`, {
+          text: description,
+        })
+        .toPromise();
+      return response.data?.contents?.translated;
+    } else {
+      const response = await this.httpService
+        .post(`https://api.funtranslations.com/translate/shakespeare.json`, {
+          text: description,
+        })
+        .toPromise();
+      return response.data?.contents?.translated;
+    }
+
+    return null;
+  }
 }
